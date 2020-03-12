@@ -11,6 +11,8 @@ def generateFastaRecord(fastafile):
     fastarecords = []
     with open(fastafile, "rU") as handle:
         for record in SeqIO.parse(handle, "fasta"):
+            recordlength = int(len(record.seq) / 2)
+            record.seq = record.seq[0:recordlength]
             if record.name.__contains__("NO_SP"):
                 fastarecords.append([str(record.name.split("|")[0]),str(record.seq),"NO_SP"])
             elif record.name.__contains__("SP"):

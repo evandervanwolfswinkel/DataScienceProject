@@ -1,5 +1,7 @@
 import re
 import pandas as pd
+from sklearn import model_selection, svm, metrics
+from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.preprocessing import LabelEncoder
 import csv
@@ -38,18 +40,47 @@ def one_hot_encoder(my_array):
     return onehot_encoded
 
 
-array = string_to_array(fastarecords[1][1])
-
-print(one_hot_encoder(array))
-
 train_df = pd.DataFrame(fastarecords)
 del train_df[0]
 
-print(train_df)
+train_df = train_df[train_df[1].str.len() == 70 ]
 
-train_df['onehotseq'] = train_df.apply(lambda x: one_hot_encoder(string_to_array(x[1])), axis=1)
+print(train_df.head())
 
-train_df['onehotlabel'] = train_df.apply(lambda x: one_hot_encoder(string_to_array(x[2])), axis=1)
+train_set = pd.DataFrame()
+train_set[1] = train_df.apply(lambda x: one_hot_encoder(string_to_array(x[1])), axis=1)
+train_set[2] = train_df[2].astype('category').cat.codes
 
 
-print(train_df)
+print(train_set.head())
+
+data = train_set.iloc[:, 0].values
+print(data)
+
+labels = train_set.iloc[:, 1].values
+print(labels)
+
+print(data.shape)
+print(labels.shape)
+
+# Splitting the human dataset into the training set and test set
+X_train, X_test, y_train, y_test = train_test_split(data,
+                                                    labels,
+                                                    test_size = 0.20,
+                                                    random_state=42)
+
+print(X_train)
+print(y_train)
+
+
+svc = svm.SVC(kernel='linear')
+
+svc.fit(X_train, y_train)
+
+predicted = svc.predict(X_test)
+score = svc.score(X_test, y_test)
+
+print('============================================')
+print('\nScore ', score)
+print('\nResult Overview\n',   metrics.classification_report(y_test, predicted))
+print('\nConfusion matrix:\n', metrics.confusion_matrix(y_test, predicted)      )

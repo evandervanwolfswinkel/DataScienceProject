@@ -53,6 +53,7 @@ for item in range(len(train_texts)):
     train_texts[item] = ' '.join(train_texts[item])
 y_h = train_set.iloc[:, 0].values         #y_h for test
 
+print(y_h)
 #train_texts = list(train_set['words'])
 #for item in range(len(train_texts)):
    # train_texts[item] = ' '.join(train_texts[item])
@@ -71,6 +72,7 @@ X_train, X_test, y_train, y_test = train_test_split(train_fit,
                                                     test_size = 0.20,
                                                     random_state=42)
 
+print(y_train)
 ### Multinomial Naive Bayes Classifier ###
 # The alpha parameter was determined by grid search previously
 classifier = MultinomialNB(alpha=0.1)

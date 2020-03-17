@@ -49,8 +49,7 @@ print(train_df.head())
 
 train_set = pd.DataFrame()
 train_set[1] = train_df.apply(lambda x: one_hot_encoder(string_to_array(x[1])), axis=1)
-train_set[2] = train_df[2].astype('category').cat.codes
-
+train_set[2] = train_df[2]
 
 print(train_set.head())
 

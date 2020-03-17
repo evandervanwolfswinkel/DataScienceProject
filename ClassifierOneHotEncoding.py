@@ -47,23 +47,33 @@ train_df = train_df[train_df[1].str.len() == 70 ]
 
 print(train_df.head())
 
+sequencelist = []
+for sequence in train_df[1]:
+    sequencelist.append(sequence)
+
+sequencelistarray = []
+for sequence in sequencelist:
+    sequencelistarray.append(string_to_array(sequence))
+print(sequencelistarray)
+
+onehot_encoder = OneHotEncoder(sparse=False, dtype=int, categories='auto')
+onehot_encoded = onehot_encoder.fit_transform(sequencelistarray)
+print(onehot_encoded)
+
+"""
 train_set = pd.DataFrame()
 train_set[1] = train_df.apply(lambda x: one_hot_encoder(string_to_array(x[1])), axis=1)
 train_set[2] = train_df[2]
 
 print(train_set.head())
+"""
 
-data = train_set.iloc[:, 0].values
-print(data)
-
-labels = train_set.iloc[:, 1].values
+labels = train_df.iloc[:, 1].values
 print(labels)
 
-print(data.shape)
-print(labels.shape)
 
 # Splitting the human dataset into the training set and test set
-X_train, X_test, y_train, y_test = train_test_split(data,
+X_train, X_test, y_train, y_test = train_test_split(onehot_encoded,
                                                     labels,
                                                     test_size = 0.20,
                                                     random_state=42)

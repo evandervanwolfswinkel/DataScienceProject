@@ -30,6 +30,7 @@ def string_to_array(my_string):
 label_encoder = LabelEncoder()
 label_encoder.fit(np.array(['a','r','n','d','c','f','q','e','g','h','i','l','k','m','p','s','t','w','y','v','z']))
 
+X = [['a',0],['r',3],['n',1],['d',4],['c',2],['f',0],['q',1],['e',4],['g',2],['h',3],['i',0],['l',0],['k',3],['m',0],['p',2],['s',1],['t',1],['w',0],['y',0],['v',0],['z',10],['u',2]]
 
 def one_hot_encoder(my_array):
     integer_encoded = label_encoder.transform(my_array)
@@ -54,12 +55,15 @@ for sequence in train_df[1]:
 sequencelistarray = []
 for sequence in sequencelist:
     sequencelistarray.append(string_to_array(sequence))
-print(sequencelistarray)
+#print(sequencelistarray)
 
 onehot_encoder = OneHotEncoder(sparse=False, dtype=int, categories='auto')
+onehot_encoder.fit(X)
 onehot_encoded = onehot_encoder.fit_transform(sequencelistarray)
+onehot_encoded = np.delete(onehot_encoded, -1, 1)
 print(onehot_encoded)
-
+print("catagories")
+print(onehot_encoder.categories_)
 """
 train_set = pd.DataFrame()
 train_set[1] = train_df.apply(lambda x: one_hot_encoder(string_to_array(x[1])), axis=1)

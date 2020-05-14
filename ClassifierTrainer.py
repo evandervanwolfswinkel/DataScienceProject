@@ -1,6 +1,7 @@
 import csv
 import numpy as np
 from sklearn import metrics
+from sklearn.model_selection import train_test_split
 from sklearn.neural_network import MLPClassifier
 import pickle
 from sklearn.preprocessing import OneHotEncoder
@@ -16,14 +17,9 @@ with open('processed_data.csv', mode='r') as csv_file:
     for row in csv_rows:
         #print(row)
         fastarecords.append(row)
-with open('minitest.csv', mode='r') as csv_file:
-    csv_rows = csv.reader(csv_file)
-    for row in csv_rows:
-        # print(row)
-        fastarecords_test.append(row)
 #remove header
 fastarecords.pop(0)
-fastarecords_test.pop(0)
+
 
 # function to convert a AA sequence string to a numpy array
 # converts to lower case, changes any non 'arndcfqeghilkmpstwyv' characters to 'n'
@@ -37,6 +33,7 @@ def string_to_array(my_string):
 label_encoder = LabelEncoder()
 label_encoder.fit(np.array(['a','r','n','d','c','f','q','e','g','h','i','l','k','m','p','s','t','w','y','v','z']))
 labels = [['a',0],['r',3],['n',1],['d',4],['c',2],['f',0],['q',1],['e',4],['g',2],['h',3],['i',0],['l',0],['k',3],['m',0],['p',2],['s',1],['t',1],['w',0],['y',0],['v',0],['z',10],['u',2]]
+#labels = [['a'],['r'],['n'],['d'],['c'],['f'],['q'],['e'],['g'],['h'],['i'],['l'],['k'],['m'],['p'],['s'],['t'],['w'],['y'],['v'],['z'],['u']]
 
 def loadandencode(fastarecords):
     train_df = pd.DataFrame(fastarecords)
@@ -62,15 +59,6 @@ def loadandencode(fastarecords):
     print(y)
     return X, y
 
-def create_Xy(X, y):
-    pickle_out = open("X.pickle", "wb")
-    pickle.dump(X, pickle_out)
-    pickle_out.close()
-
-    pickle_out = open("y.pickle", "wb")
-    pickle.dump(y, pickle_out)
-    pickle_out.close()
-
 def create_models(X,y,X_test,y_test):
     print(X)
     x_train = X
@@ -91,22 +79,8 @@ def create_models(X,y,X_test,y_test):
 
 
 def Main():
-
-    fileX = pathlib.Path("X.pickle")
-    filey = pathlib.Path("y.pickle")
-    if fileX.exists() and filey.exists():
-        print("File exist")
-    else:
-        X, y = loadandencode(fastarecords)
-        create_Xy(X, y)
-
-    model = pathlib.Path("0-64-3-8epochsss")
-    if model.exists():
-        print("Model exist")
-    else:
-        X, y = loadandencode(fastarecords)
-        X_test, y_test = loadandencode(fastarecords_test)
-        create_models(X,y,X_test,y_test)
-
+    X, y = loadandencode(fastarecords)
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.33, random_state = 42)
+    create_models(X_train,y_train,X_test,y_test)
 
 Main()
